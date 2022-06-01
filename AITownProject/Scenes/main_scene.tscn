@@ -1,0 +1,49 @@
+[gd_scene load_steps=9 format=3 uid="uid://ciq5e4rf6iipi"]
+
+[ext_resource type="Environment" uid="uid://6uxgu0l44jxm" path="res://Environments/main_environment.tres" id="1_t8gxv"]
+[ext_resource type="Material" uid="uid://cc1d2r2ugluth" path="res://Materials/ground_material_3d.tres" id="2_wixbm"]
+[ext_resource type="Texture2D" uid="uid://ckc4lsj2hbo8h" path="res://icon.png" id="3_4vpqf"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mgw3q"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_8ht07"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0by5h"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ujg0c"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_svui4"]
+albedo_texture = ExtResource( "3_4vpqf" )
+uv1_scale = Vector3(3, 2, 1)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.912741, 0.408538, 0, -0.408538, 0.912741, 0, 3.48264, 4.95604)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.869409, 0.407722, 0.27909, 0.0481207, -0.632038, 0.773442, 0.491745, -0.659007, -0.56912, 0, 4.80825, -1.60586)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( "1_t8gxv" )
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(20, 0, 0, 0, 0.1, 0, 0, 0, 20, 0, -0.05, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource( "BoxShape3D_mgw3q" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource( "BoxMesh_8ht07" )
+surface_material_override/0 = ExtResource( "2_wixbm" )
+
+[node name="RigidDynamicBody3D" type="RigidDynamicBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.92429, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidDynamicBody3D"]
+shape = SubResource( "BoxShape3D_0by5h" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidDynamicBody3D"]
+mesh = SubResource( "BoxMesh_ujg0c" )
+surface_material_override/0 = SubResource( "StandardMaterial3D_svui4" )
