@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://q3fvl22r4rxb"]
+
+[ext_resource type="Shader" path="res://Materials/OutlineShrinkShader/outline_shaderpass2.gdshader" id="1_v6yd5"]
+[ext_resource type="Shader" path="res://Materials/OutlineShrinkShader/shrink_shader.gdshader" id="2_y7ka0"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ul6x"]
+render_priority = 0
+shader = ExtResource( "1_v6yd5" )
+shader_param/color = Quaternion(0, 0, 0, 1)
+shader_param/thickness = 0.0
+
+[resource]
+render_priority = 0
+next_pass = SubResource( "ShaderMaterial_7ul6x" )
+shader = ExtResource( "2_y7ka0" )
+shader_param/colour = Color(0.109804, 0.431373, 0.168627, 1)
+shader_param/metal = 0.0
+shader_param/rim = 0.2
+shader_param/rough = 0.05
+shader_param/size = 0.925

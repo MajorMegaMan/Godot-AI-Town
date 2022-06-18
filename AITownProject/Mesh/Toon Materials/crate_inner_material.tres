@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://boojkv7catlk1"]
+
+[ext_resource type="Shader" path="res://Materials/OutlineShrinkShader/shrink_shader_cullFront.gdshader" id="1_cbeew"]
+
+[resource]
+render_priority = 0
+shader = ExtResource( "1_cbeew" )
+shader_param/colour = Color(0.4, 0.219608, 0.121569, 1)
+shader_param/metal = 0.0
+shader_param/rim = 0.2
+shader_param/rough = 0.05
+shader_param/size = 1.0

@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://b4hujkwrcjklu"]
+
+[ext_resource type="ArrayMesh" uid="uid://dv02hudpiu8tw" path="res://Mesh/Space Crate/Sketchfab_Scene_Object_0.res" id="1_dt8jv"]
+[ext_resource type="ArrayMesh" uid="uid://cpvrtbavxgc8f" path="res://Mesh/Space Crate/Sketchfab_Scene_Object_1.res" id="2_1rso7"]
+[ext_resource type="Script" path="res://Scripts/enabler.gd" id="2_v20k3"]
+[ext_resource type="Material" uid="uid://dnq8gw4eh1iud" path="res://Mesh/Toon Materials/crate_outline_material.tres" id="3_wq6kq"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_arsjk"]
+material = ExtResource( "3_wq6kq" )
+
+[node name="FoodStorageTarget" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = ExtResource( "1_dt8jv" )
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D"]
+mesh = ExtResource( "2_1rso7" )
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D/MeshInstance3D2"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+mesh = SubResource( "BoxMesh_arsjk" )
+skeleton = NodePath("../../..")
+
+[node name="AIActionTarget" type="AIActionTarget" parent="."]
+action_target_type = 1
+
+[node name="Enabler" type="Node" parent="AIActionTarget"]
+script = ExtResource( "2_v20k3" )

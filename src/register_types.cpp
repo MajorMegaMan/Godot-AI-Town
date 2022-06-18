@@ -37,6 +37,9 @@
 #include <godot_cpp/godot.hpp>
 
 #include "example.h"
+#include "enableExample.h"
+#include "AIAgent.h"
+#include "AIActionTarget.h"
 
 using namespace godot;
 
@@ -47,6 +50,9 @@ void initialize_example_module(ModuleInitializationLevel p_level) {
 
 	ClassDB::register_class<ExampleRef>();
 	ClassDB::register_class<Example>();
+	ClassDB::register_class<EnableExample>();
+	ClassDB::register_class<AIAgent>();
+	ClassDB::register_class<AIActionTarget>();
 }
 
 void uninitialize_example_module(ModuleInitializationLevel p_level) {

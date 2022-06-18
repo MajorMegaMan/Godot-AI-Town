@@ -1,0 +1,41 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://cj8sf633wwbhx"
+path="res://.godot/imported/scene.gltf-45d568ccba72410392783ca6597ce16b.scn"
+
+[deps]
+
+source_file="res://Mesh/bush_1/scene.gltf"
+dest_files=["res://.godot/imported/scene.gltf-45d568ccba72410392783ca6597ce16b.scn"]
+
+[params]
+
+nodes/root_type="Node3D"
+nodes/root_name="Scene Root"
+nodes/root_scale=1.0
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+import_script/path=""
+_subresources={
+"materials": {
+"Material.005": {
+"use_external/enabled": true,
+"use_external/path": "res://Mesh/bush_1/Material.005.tres"
+}
+},
+"meshes": {
+"Sketchfab_Scene_Icosphere001_Material005_0": {
+"save_to_file/enabled": true,
+"save_to_file/path": "res://Mesh/bush_1/Sketchfab_Scene_Icosphere001_Material005_0.res"
+}
+}
+}
