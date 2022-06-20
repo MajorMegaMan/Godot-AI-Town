@@ -11,7 +11,7 @@ uniform sampler2D _texture;
 
 void vertex()
 {
-	VERTEX = VERTEX * size;
+	VERTEX = VERTEX + (NORMAL * (size - 1.0));
 }
 
 void fragment() {

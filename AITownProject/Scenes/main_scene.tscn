@@ -1,11 +1,12 @@
-[gd_scene load_steps=19 format=3 uid="uid://c4l8jvw0lp3vo"]
+[gd_scene load_steps=20 format=3 uid="uid://dcx4ixpkbeuf"]
 
 [ext_resource type="Environment" uid="uid://dft3vw4byymft" path="res://Environments/main_environment.tres" id="1_t8gxv"]
+[ext_resource type="Script" path="res://Scripts/camera_follow.gd" id="1_xx5hh"]
 [ext_resource type="Material" uid="uid://cc1d2r2ugluth" path="res://Materials/ground_material_3d.tres" id="2_wixbm"]
 [ext_resource type="Texture2D" uid="uid://ckc4lsj2hbo8h" path="res://icon.png" id="3_4vpqf"]
-[ext_resource type="Script" path="res://Scripts/debug_control.gd" id="3_04xr3"]
+[ext_resource type="Script" path="res://Scripts/DEBUG/debug_control.gd" id="3_04xr3"]
 [ext_resource type="Material" uid="uid://dem35wqotgvc1" path="res://Materials/toonWall_material_3d.tres" id="5_uwr6l"]
-[ext_resource type="Script" path="res://Scripts/debug_mouseCamRay.gd" id="7_fycet"]
+[ext_resource type="Script" path="res://Scripts/DEBUG/debug_mouseCamRay.gd" id="7_fycet"]
 [ext_resource type="PackedScene" uid="uid://cpqtiwrljp8r" path="res://AIAgent/AIAgent.tscn" id="8_f2mcj"]
 [ext_resource type="Material" uid="uid://dsxht70cflris" path="res://Materials/OutlineShrinkShader/outline_material.tres" id="8_nyvw7"]
 [ext_resource type="PackedScene" uid="uid://ciqer7nmkweke" path="res://ActionTargets/FoodTarget.tscn" id="9_bkkcd"]
@@ -33,6 +34,12 @@ polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(5, 4, 3), PackedInt32Arr
 agent/height = 2.0
 
 [node name="Node3D" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.99942, -0.00858939, 0.0329612, -0.00477289, 0.922821, 0.385198, -0.0337259, -0.385132, 0.922245, -5.36098, 2.46769, 10.3628)
+script = ExtResource( "1_xx5hh" )
+targetNodePath = NodePath("../AIAgent")
+lookOffset = Vector3(0, 1, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.33288, 0.74022, 0.58418, 0.0481206, -0.632038, 0.773442, 0.941741, -0.229352, -0.246013, -4.86051, 4.80825, 6.82445)
@@ -125,7 +132,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.00872, 0, 7.786)
 
 [node name="MouseRay" type="Node3D" parent="."]
 script = ExtResource( "7_fycet" )
-camPath = NodePath("../AIAgent/Camera3D")
+camPath = NodePath("../Camera3D")
 mouseLocation = NodePath("MeshInstance3D")
 AIAgentPath = NodePath("../AIAgent")
 
@@ -136,9 +143,6 @@ surface_material_override/0 = ExtResource( "8_nyvw7" )
 
 [node name="AIAgent" parent="." instance=ExtResource( "8_f2mcj" )]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.626, 0, 8.104)
-
-[node name="Camera3D" type="Camera3D" parent="AIAgent"]
-transform = Transform3D(0.99942, -0.00858942, 0.0329612, -0.020787, 0.61279, 0.789973, -0.0269837, -0.790199, 0.612256, 0.265023, 11.5039, 4.96884)
 
 [node name="FoodTarget" parent="." instance=ExtResource( "9_bkkcd" )]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.84099, 0, 8.62571)

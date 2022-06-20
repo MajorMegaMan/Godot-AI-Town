@@ -53,6 +53,7 @@ void initialize_example_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<EnableExample>();
 	ClassDB::register_class<AIAgent>();
 	ClassDB::register_class<AIActionTarget>();
+	ClassDB::register_class<AnimationTreeGetter>();
 }
 
 void uninitialize_example_module(ModuleInitializationLevel p_level) {

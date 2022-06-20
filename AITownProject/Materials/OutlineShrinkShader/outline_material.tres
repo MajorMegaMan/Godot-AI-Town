@@ -3,7 +3,7 @@
 [ext_resource type="Shader" path="res://Materials/OutlineShrinkShader/outline_shaderpass2.gdshader" id="1_4atjp"]
 [ext_resource type="Shader" path="res://Materials/OutlineShrinkShader/shrink_shader.gdshader" id="2_4rxd5"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ul6x"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h84ww"]
 render_priority = 0
 shader = ExtResource( "1_4atjp" )
 shader_param/color = Quaternion(0, 0, 0, 1)
@@ -11,7 +11,7 @@ shader_param/thickness = 0.0
 
 [resource]
 render_priority = 0
-next_pass = SubResource( "ShaderMaterial_7ul6x" )
+next_pass = SubResource( "ShaderMaterial_h84ww" )
 shader = ExtResource( "2_4rxd5" )
 shader_param/colour = Color(0.431373, 0.290196, 0.156863, 1)
 shader_param/metal = 0.0

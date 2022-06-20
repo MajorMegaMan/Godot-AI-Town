@@ -9,8 +9,11 @@
 
 #include <godot_cpp/classes/character_body3d.hpp>
 #include <godot_cpp/classes/navigation_agent3d.hpp>
+#include <godot_cpp/classes/animation_tree.hpp>
 
 #include <godot_cpp/core/binder_common.hpp>
+
+#include "AnimationTreeGetter.h"
 
 #include "DEBUGAIHeader.h"
 #include "NodeStarter.h"
@@ -26,9 +29,12 @@ protected:
 	static void _bind_methods();
 
 private:
-	NodePath m_navAgentPath;
-	NavigationAgent3D* m_navAgent;
+	NodePathProperty<NavigationAgent3D> m_navAgentProp;
 	
+	NodePathProperty<AnimationTreeGetter> m_animTreeHolderProp;
+	//NodePath m_animTreeHolderPath; // This is the node that has an animation tree as a child.
+	//AnimationTree* m_animTree;
+
 	float m_movementSpeed = 4.0f;
 
 	typedef void (AIAgent::*UpdateFunc)(double delta);
@@ -45,11 +51,15 @@ public:
 	void MoveTo(Vector3 location);
 
 	// Property.
-	void set_navigation_agent(NavigationAgent3D* navAgent);
-	NavigationAgent3D* get_navigation_agent() const;
+	NavigationAgent3D* GetNavAgent() const;
 
 	void set_navigation_node_path(const NodePath& navAgentNodePath);
 	NodePath get_navigation_node_path() const;
+
+	AnimationTree* GetAnimTree() const;
+
+	void set_anim_tree_getter_path(const NodePath& animTreeNodePath);
+	NodePath get_anim_tree_getter_path() const;
 
 	// Node Starter interfaces. These are here becuase godot needs to connect bindings from this class in order to
 	void Start()

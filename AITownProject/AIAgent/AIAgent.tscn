@@ -1,23 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://cpqtiwrljp8r"]
+[gd_scene load_steps=4 format=3 uid="uid://cpqtiwrljp8r"]
 
-[ext_resource type="Material" uid="uid://dsxht70cflris" path="res://Materials/OutlineShrinkShader/outline_material.tres" id="1_uumv8"]
+[ext_resource type="PackedScene" uid="uid://blasgg8ee84an" path="res://Mesh/Humanoid/low poly/dude.tscn" id="1_t4337"]
 [ext_resource type="Script" path="res://Scripts/enabler.gd" id="2_p27r2"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5ilt2"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_o56lb"]
-
 [node name="AIAgent" type="AIAgent"]
 navigation_node_path = NodePath("NavigationAgent3D")
+anim_tree_getter_path = NodePath("Dude")
+
+[node name="Dude" parent="." instance=ExtResource( "1_t4337" )]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource( "CapsuleShape3D_5ilt2" )
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource( "CapsuleMesh_o56lb" )
-surface_material_override/0 = ExtResource( "1_uumv8" )
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 target_desired_distance = 0.1

@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://5b3j6m6vnfmu"]
+
+[ext_resource type="Shader" path="res://Materials/OutlineShrinkShader/outline_shaderpass2.gdshader" id="1_4atjp"]
+[ext_resource type="Shader" path="res://Materials/OutlineShrinkShader/grow_shader.gdshader" id="2_7s6rb"]
+[ext_resource type="Texture2D" uid="uid://dcutsoqnwb320" path="res://Mesh/Humanoid/low poly/survivorFemaleA.png" id="3_pojix"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ul6x"]
+render_priority = 0
+shader = ExtResource( "1_4atjp" )
+shader_param/color = Quaternion(0, 0, 0, 1)
+shader_param/thickness = 0.0
+
+[resource]
+render_priority = 0
+next_pass = SubResource( "ShaderMaterial_7ul6x" )
+shader = ExtResource( "2_7s6rb" )
+shader_param/_texture = ExtResource( "3_pojix" )
+shader_param/colour = Color(1, 1, 1, 1)
+shader_param/metal = 0.775
+shader_param/rim = 0.02
+shader_param/rough = 0.05
+shader_param/size = 0.965
