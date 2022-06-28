@@ -8,6 +8,8 @@ class DEBUGAction : public GOAPAIAction<Vector3>
 {
 public:
 	String name;
+	float actionCompleteTime = 0.0f;
+	float animationTriggerValue = 0.0f;
 
 	static void SetHoldItem(GOAPWorldState& worldState, int item)
 	{
@@ -86,6 +88,8 @@ public:
 	{
 		AddKey(HOLDITEM);
 		name = "Pick up Food.";
+		actionCompleteTime = 2.0f;
+		animationTriggerValue = 1.0f;
 	}
 
 	void PerformEffects(GOAPWorldState& worldState) override
@@ -112,7 +116,7 @@ public:
 		return foodItemTarget;
 	}
 
-	bool IsInRange(const GOAPAIAgent<Vector3>& agent, const GOAPAIActionTarget<Vector3>* actionTarget) const override
+	bool IsInRange(const GOAPAIAgent<Vector3>& agent, const GOAPAIActionTarget<Vector3>* actionTarget) override
 	{
 		float distance = FindDistance(agent, *actionTarget);
 		return distance < 0.5f;
@@ -127,6 +131,8 @@ public:
 		AddKey(FOODCOUNT);
 		AddKey(HOLDITEM);
 		name = "Store Food";
+		actionCompleteTime = 1.0f;
+		animationTriggerValue = 2.0f;
 	}
 
 	void PerformEffects(GOAPWorldState& worldState) override
@@ -148,10 +154,47 @@ public:
 		return FindClosestActionTarget(AT_FOOD_STORAGE, agent);
 	}
 
-	bool IsInRange(const GOAPAIAgent<Vector3>& agent, const GOAPAIActionTarget<Vector3>* actionTarget) const override
+	bool IsInRange(const GOAPAIAgent<Vector3>& agent, const GOAPAIActionTarget<Vector3>* actionTarget) override
 	{
 		float distance = FindDistance(agent, *actionTarget);
-		return distance < 0.5f;
+		return distance < 1.0f;
+	}
+};
+
+class EatFoodAction : public SingletonDEBUGAction<EatFoodAction>
+{
+public:
+	EatFoodAction()
+	{
+		AddKey(HUNGER);
+		AddKey(HOLDITEM);
+		name = "Eat Food";
+		actionCompleteTime = 1.0f;
+		animationTriggerValue = 3.0f;
+	}
+
+	void PerformEffects(GOAPWorldState& worldState) override
+	{
+		GOAPValue hunger = worldState.GetGOAPValue(HUNGER);
+		hunger.SetFloat(100.0f);
+		DEBUGAction::SetHoldItem(worldState, 0);
+	}
+
+	bool CheckConditions(const GOAPWorldState& worldState) override
+	{
+		bool isHoldingFood = DEBUGAction::IsHolding(worldState, 1);
+
+		return isHoldingFood;
+	}
+
+	GOAPAIActionTarget<Vector3>* FindActionTarget(const GOAPAIAgent<Vector3>& agent) override
+	{
+		return (GOAPAIActionTarget<Vector3>*)&agent;
+	}
+
+	bool IsInRange(const GOAPAIAgent<Vector3>& agent, const GOAPAIActionTarget<Vector3>* actionTarget) override
+	{
+		return true;
 	}
 };
 
@@ -162,6 +205,7 @@ public:
 	{
 		AddKey(HOLDITEM);
 		name = "Drop Item.";
+		animationTriggerValue = 0.0f;
 	}
 
 	void PerformEffects(GOAPWorldState& worldState) override
@@ -179,7 +223,7 @@ public:
 		return nullptr;
 	}
 
-	bool IsInRange(const GOAPAIAgent<Vector3>& agent, const GOAPAIActionTarget<Vector3>* actionTarget) const override
+	bool IsInRange(const GOAPAIAgent<Vector3>& agent, const GOAPAIActionTarget<Vector3>* actionTarget) override
 	{
 		return true;
 	}

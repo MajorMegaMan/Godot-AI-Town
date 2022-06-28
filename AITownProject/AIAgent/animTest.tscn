@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cxqaunbcuqogu"]
+
+[ext_resource type="Script" path="res://Scripts/DEBUG/debug_AnimTest.gd" id="1_ye7g7"]
+[ext_resource type="PackedScene" uid="uid://blasgg8ee84an" path="res://Mesh/Humanoid/low poly/dude.tscn" id="2_0ih4x"]
+
+[node name="AnimTest" type="Node3D"]
+script = ExtResource( "1_ye7g7" )
+
+[node name="Dude" parent="." instance=ExtResource( "2_0ih4x" )]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)

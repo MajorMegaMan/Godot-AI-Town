@@ -34,4 +34,19 @@ public:
 	}
 };
 
+class FillHungerGoal : public GoalSingleton<FillHungerGoal>
+{
+public:
+	FillHungerGoal()
+	{
+		AddKey(HUNGER);
+	}
+
+	bool PerformConditions(const GOAPWorldState& current, const GOAPWorldState& base) override
+	{
+		GOAPReadValue currentHunger = current.GetReadValue(HUNGER);
+		return currentHunger.GetFloat() > 80.0f;
+	}
+};
+
 #endif // ! DEBUG_GOALS_H

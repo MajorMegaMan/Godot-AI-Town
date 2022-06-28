@@ -1,8 +1,7 @@
 #ifndef DEBUG_AI_ENVIRONMENT_H
 #define DEBUG_AI_ENVIRONMENT_H
 
-#include "GOAPAI.h"
-#include "DEBUGWorldKeys.h"
+#include "BaseAgentStats.h"
 #include "SingletonTemplate.h"
 #include <map>
 #include <vector>
@@ -77,6 +76,7 @@ private:
 				return true;
 			}
 		}
+		return false;
 	}
 
 	bool ListContains(std::vector<GOAPAIActionTarget<Vector3>*>& list, GOAPAIActionTarget<Vector3>* target, int& out_index)
@@ -90,6 +90,7 @@ private:
 				return true;
 			}
 		}
+		return false;
 	}
 
 	void RemoveFromList(std::vector<GOAPAIActionTarget<Vector3>*>& list, GOAPAIActionTarget<Vector3>* target)

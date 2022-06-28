@@ -9,8 +9,6 @@
 #include <godot_cpp/classes/world3D.hpp>
 #include <godot_cpp/classes/navigation_server3d.hpp>
 
-#include <godot_cpp/classes/animation_node_state_machine_playback.hpp>
-
 using namespace godot;
 
 void AIAgent::_bind_methods() {
@@ -28,6 +26,15 @@ void AIAgent::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_anim_tree_getter_path"), &AIAgent::get_anim_tree_getter_path);
 	ClassDB::bind_method(D_METHOD("set_anim_tree_getter_path", "animTreeGetterPath"), &AIAgent::set_anim_tree_getter_path);
 	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "anim_tree_getter_path"), "set_anim_tree_getter_path", "get_anim_tree_getter_path");
+
+	ClassDB::bind_method(D_METHOD("get_move_speed"), &AIAgent::get_move_speed);
+	ClassDB::bind_method(D_METHOD("set_move_speed", "moveSpeed"), &AIAgent::set_move_speed);
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "movementSpeed"), "set_move_speed", "get_move_speed");
+
+
+	ClassDB::bind_method(D_METHOD("GetWorldStateInt", "key"), &AIAgent::GetWorldStateInt);
+	ClassDB::bind_method(D_METHOD("GetWorldStateBool", "key"), &AIAgent::GetWorldStateBool);
+	ClassDB::bind_method(D_METHOD("GetWorldStateFloat", "key"), &AIAgent::GetWorldStateFloat);
 }
 
 AIAgent::AIAgent()
@@ -46,6 +53,8 @@ void AIAgent::on_velocity_computed(Vector3 safeVelocity)
 {
 	set_velocity(safeVelocity);
 	look_at(get_global_transform().get_origin() + safeVelocity);
+
+	GetAnimTree()->set("parameters/MovementBlend/Forward/blend_amount", safeVelocity.length() / m_movementSpeed);
 	move_and_slide();
 }
 
@@ -73,6 +82,16 @@ void AIAgent::set_navigation_node_path(const NodePath& navAgentNodePath)
 NodePath AIAgent::get_navigation_node_path() const
 {
 	return m_navAgentProp.GetNodePath();
+}
+
+void AIAgent::set_move_speed(float moveSpeed)
+{
+	m_movementSpeed = moveSpeed;
+}
+
+float AIAgent::get_move_speed() const
+{
+	return m_movementSpeed;
 }
 
 AnimationTree* AIAgent::GetAnimTree() const
@@ -155,11 +174,16 @@ void AIAgent::SetUpGOAPAgent()
 	if (animTree != nullptr)
 	{
 		UtilityFunctions::print("Yay! Found the animTree.");
+		m_animStatePlayback = Object::cast_to<AnimationNodeStateMachinePlayback>(GetAnimTree()->get("parameters/playback"));
 	}
 	else
 	{
 		UtilityFunctions::print("boo! did not find animTree.");
 	}
+
+	// Add worldStateRefs
+	m_worldStateRefs.AddWorldState(*AIWorld::GetWorldState());
+	m_worldStateRefs.AddWorldState(GetAgentWorldState());
 }
 
 void AIAgent::NavAgentUpdate(double delta)
@@ -178,7 +202,19 @@ void AIAgent::NavAgentUpdate(double delta)
 
 void AIAgent::PlanUpdate(double delta)
 {
-	GOAPAIAgent::Update();
+	GOAPAIAgent::Update(delta);
+	GetAnimTree()->advance(delta);
+}
+
+void AIAgent::ActionUpdate(double delta)
+{
+	PlanUpdate(delta);
+	m_actionTimer.Tick(delta);
+	if (m_actionTimer.Evaluate())
+	{
+		ApplyCurrentActionEffects();
+		ActionComplete();
+	}
 }
 
 void AIAgent::MoveUpdate(double delta)
@@ -209,12 +245,9 @@ void AIAgent::OnMoveBegin(Vector3 actionLocation)
 {
 	UtilityFunctions::print("Begin Move.");
 	MoveTo(actionLocation);
-	UtilityFunctions::print(GetMoveLocation());
 	if (GetCurrentAction() != nullptr)
 	{
 		UtilityFunctions::print("Found an action.");
-		auto debugAction = (DEBUGAction*)GetCurrentAction();
-		UtilityFunctions::print(debugAction->name);
 	}
 	else
 	{
@@ -222,13 +255,7 @@ void AIAgent::OnMoveBegin(Vector3 actionLocation)
 	}
 	physicsFunc = &AIAgent::MoveUpdate;
 
-	AnimationTree* animTree = GetAnimTree();
-	auto stateMachine = animTree->get("parameters/playback");
-
-	UtilityFunctions::print(Variant::get_type_name(stateMachine.get_type()));
-	auto statePlayback = Object::cast_to<AnimationNodeStateMachinePlayback>(stateMachine);
-	statePlayback->travel("Walk");
-	//stateMachine.call<godot::String>("travel", "walk");
+	m_animStatePlayback->travel("MovementBlend");
 }
 
 void AIAgent::OnMoveStop()
@@ -236,14 +263,27 @@ void AIAgent::OnMoveStop()
 	physicsFunc = &AIAgent::Empty;
 }
 
-void AIAgent::OnActionBegin(GOAPAIActionTarget<Vector3>* actionTarget)
+void AIAgent::OnActionBegin(GOAPAIAction<Vector3>* action, GOAPAIActionTarget<Vector3>* actionTarget)
 {
 	UtilityFunctions::print("Begin action.");
-	auto debugAction = (DEBUGAction*)GetCurrentAction();
+	DEBUGAction* debugAction = (DEBUGAction*)action;
 	UtilityFunctions::print(debugAction->name);
+
+	m_actionTimer.Reset();
+	m_actionTimer.SetTargetTime(debugAction->actionCompleteTime);
+
+	processFunc = &AIAgent::ActionUpdate;
+
+	m_animStatePlayback->travel("ActionStates");
+	GetAnimTree()->set("parameters/ActionStates/blend_position", debugAction->animationTriggerValue);
 }
 
-void AIAgent::OnActionStop(GOAPAIActionTarget<Vector3>* actionTarget)
+void AIAgent::OnActionStop(GOAPAIAction<Vector3>* action, GOAPAIActionTarget<Vector3>* actionTarget)
 {
+	UtilityFunctions::print("Stop action.");
+	DEBUGAction* debugAction = (DEBUGAction*)action;
+	UtilityFunctions::print(debugAction->name);
 
+	processFunc = &AIAgent::PlanUpdate;
+	m_animStatePlayback->travel("MovementBlend");
 }

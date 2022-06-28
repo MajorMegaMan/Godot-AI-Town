@@ -1,0 +1,14 @@
+#include "DEBUGWorldKeys.h"
+
+#include <godot_cpp/core/class_db.hpp>
+
+void WorldKeys::_bind_methods()
+{
+	// Constants.
+	BIND_ENUM_CONSTANT(WS_GLOBAL_FOODCOUNT);
+	BIND_ENUM_CONSTANT(WS_AGENT_HUNGER);
+	BIND_ENUM_CONSTANT(WS_AGENT_HOLDITEM);
+
+	BIND_ENUM_CONSTANT(AT_FOOD_ITEM);
+	BIND_ENUM_CONSTANT(AT_FOOD_STORAGE);
+}

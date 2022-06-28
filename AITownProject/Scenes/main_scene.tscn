@@ -1,16 +1,19 @@
-[gd_scene load_steps=20 format=3 uid="uid://dcx4ixpkbeuf"]
+[gd_scene load_steps=25 format=3 uid="uid://dtt6c163jo7uj"]
 
-[ext_resource type="Environment" uid="uid://dft3vw4byymft" path="res://Environments/main_environment.tres" id="1_t8gxv"]
+[ext_resource type="BehaviourResource" path="res://AIAgent/debugBehaviour/debug_behaviour_resource.tres" id="1_5y5vt"]
+[ext_resource type="Environment" path="res://Environments/main_environment.tres" id="1_t8gxv"]
+[ext_resource type="Script" path="res://Scripts/enabler.gd" id="1_x4v7o"]
 [ext_resource type="Script" path="res://Scripts/camera_follow.gd" id="1_xx5hh"]
-[ext_resource type="Material" uid="uid://cc1d2r2ugluth" path="res://Materials/ground_material_3d.tres" id="2_wixbm"]
-[ext_resource type="Texture2D" uid="uid://ckc4lsj2hbo8h" path="res://icon.png" id="3_4vpqf"]
+[ext_resource type="Material" path="res://Materials/ground_material_3d.tres" id="2_wixbm"]
+[ext_resource type="Texture2D" path="res://icon.png" id="3_4vpqf"]
 [ext_resource type="Script" path="res://Scripts/DEBUG/debug_control.gd" id="3_04xr3"]
-[ext_resource type="Material" uid="uid://dem35wqotgvc1" path="res://Materials/toonWall_material_3d.tres" id="5_uwr6l"]
+[ext_resource type="Material" path="res://Materials/toonWall_material_3d.tres" id="5_uwr6l"]
 [ext_resource type="Script" path="res://Scripts/DEBUG/debug_mouseCamRay.gd" id="7_fycet"]
-[ext_resource type="PackedScene" uid="uid://cpqtiwrljp8r" path="res://AIAgent/AIAgent.tscn" id="8_f2mcj"]
-[ext_resource type="Material" uid="uid://dsxht70cflris" path="res://Materials/OutlineShrinkShader/outline_material.tres" id="8_nyvw7"]
-[ext_resource type="PackedScene" uid="uid://ciqer7nmkweke" path="res://ActionTargets/FoodTarget.tscn" id="9_bkkcd"]
-[ext_resource type="PackedScene" uid="uid://b4hujkwrcjklu" path="res://ActionTargets/FoodStorageTarget.tscn" id="10_jo04s"]
+[ext_resource type="Material" path="res://Materials/OutlineShrinkShader/outline_material.tres" id="8_nyvw7"]
+[ext_resource type="PackedScene" path="res://ActionTargets/FoodTarget.tscn" id="9_bkkcd"]
+[ext_resource type="PackedScene" path="res://ActionTargets/FoodStorageTarget.tscn" id="10_jo04s"]
+[ext_resource type="PackedScene" path="res://AIAgent/AIAgent.tscn" id="11_a3yvp"]
+[ext_resource type="Script" path="res://Scripts/DEBUG/debug_label_setter.gd" id="12_6g26j"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_3vnl1"]
 
@@ -33,7 +36,18 @@ vertices = PackedVector3Array(-9.5, 0.4, -4, -5.75, 0.4, -3.75, -5.75, 0.4, -5.2
 polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(5, 4, 3), PackedInt32Array(7, 6, 8), PackedInt32Array(8, 6, 9), PackedInt32Array(11, 10, 12), PackedInt32Array(12, 10, 13), PackedInt32Array(14, 18, 15), PackedInt32Array(15, 18, 17), PackedInt32Array(15, 17, 16), PackedInt32Array(19, 21, 20), PackedInt32Array(23, 22, 24), PackedInt32Array(24, 22, 25), PackedInt32Array(28, 27, 26), PackedInt32Array(31, 30, 29), PackedInt32Array(35, 34, 32), PackedInt32Array(32, 34, 33), PackedInt32Array(38, 37, 36), PackedInt32Array(41, 40, 39), PackedInt32Array(44, 43, 42), PackedInt32Array(46, 45, 47), PackedInt32Array(47, 45, 48), PackedInt32Array(50, 49, 51), PackedInt32Array(51, 49, 52), PackedInt32Array(55, 54, 53), PackedInt32Array(57, 56, 58), PackedInt32Array(61, 60, 59), PackedInt32Array(63, 62, 64), PackedInt32Array(64, 62, 65), PackedInt32Array(67, 66, 68), PackedInt32Array(68, 66, 69), PackedInt32Array(71, 70, 72), PackedInt32Array(72, 70, 73), PackedInt32Array(76, 75, 74), PackedInt32Array(77, 82, 78), PackedInt32Array(78, 82, 79), PackedInt32Array(79, 82, 81), PackedInt32Array(79, 81, 80), PackedInt32Array(84, 83, 85), PackedInt32Array(85, 83, 86), PackedInt32Array(89, 88, 87), PackedInt32Array(93, 92, 90), PackedInt32Array(90, 92, 91)]
 agent/height = 2.0
 
-[node name="Node3D" type="Node3D"]
+[sub_resource type="Gradient" id="Gradient_2rc0i"]
+offsets = PackedFloat32Array(0, 0.519298, 0.982456)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_kjlxo"]
+gradient = SubResource( "Gradient_2rc0i" )
+
+[node name="GameManager" type="GameManager"]
+behaviour_resource_ref = ExtResource( "1_5y5vt" )
+
+[node name="GameManagerEnabler" type="Node" parent="."]
+script = ExtResource( "1_x4v7o" )
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.99942, -0.00858939, 0.0329612, -0.00477289, 0.922821, 0.385198, -0.0337259, -0.385132, 0.922245, -5.36098, 2.46769, 10.3628)
@@ -134,18 +148,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.00872, 0, 7.786)
 script = ExtResource( "7_fycet" )
 camPath = NodePath("../Camera3D")
 mouseLocation = NodePath("MeshInstance3D")
-AIAgentPath = NodePath("../AIAgent")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MouseRay"]
 mesh = SubResource( "SphereMesh_y424u" )
 skeleton = NodePath("")
 surface_material_override/0 = ExtResource( "8_nyvw7" )
 
-[node name="AIAgent" parent="." instance=ExtResource( "8_f2mcj" )]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.626, 0, 8.104)
-
 [node name="FoodTarget" parent="." instance=ExtResource( "9_bkkcd" )]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.84099, 0, 8.62571)
 
 [node name="FoodStorageTarget" parent="." instance=ExtResource( "10_jo04s" )]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.944961, 4.76837e-07, -5.52284)
+
+[node name="AIAgent" parent="." instance=ExtResource( "11_a3yvp" )]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5736, 0, 7.93422)
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+script = ExtResource( "12_6g26j" )
+labelNodePath = NodePath("Label")
+agentPath = NodePath("../AIAgent")
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2"]
+offset_right = 256.0
+offset_bottom = 26.0
+texture = SubResource( "GradientTexture1D_kjlxo" )
+
+[node name="Label" type="Label" parent="MarginContainer2"]
+offset_right = 256.0
+offset_bottom = 26.0
+text = "Hello"

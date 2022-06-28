@@ -43,6 +43,8 @@ public:
 	void Empty(double delta);
 
 	// Virtual function override (no need to bind manually).
+
+	virtual void TestVirtual();
 };
 
 #endif // ! ENABLEEXAMPLE_CLASS_H

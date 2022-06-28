@@ -41,9 +41,11 @@ public:
 
 		AddAction(PickUpFoodAction::GetInstance());
 		AddAction(StoreFoodAction::GetInstance());
+		AddAction(EatFoodAction::GetInstance());
 		AddAction(DropItemAction::GetInstance());
 
 		AddGoal(StoreFoodGoal::GetInstance());
+		AddGoal(FillHungerGoal::GetInstance());
 	}
 
 	~BehaviourFoodGatherer()
@@ -53,7 +55,27 @@ public:
 
 	GOAPGoal* FindGoal(const GOAPWorldState& worldState) override
 	{
+		auto hungerRef = worldState.GetReadValue(HUNGER);
+		if (hungerRef.GetFloat() < 20.0f)
+		{
+			// return fill hunger
+			return GetGoal(1);
+		}
+
+		// return store food
 		return GetGoal(0);
+	}
+
+	void Update(float delta, GOAPWorldState& agentState) override
+	{
+		auto hungerRef = agentState.GetGOAPValue(HUNGER);
+		float hunger = hungerRef.GetFloat();
+		hunger -= delta;
+		if (hunger < 0.0f)
+		{
+			hunger = 0.0f;
+		}
+		hungerRef.SetFloat(hunger);
 	}
 };
 

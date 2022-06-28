@@ -22,6 +22,11 @@ namespace GOAP
 			m_baseAgentValues = baseAgentValues;
 		}
 
+		void ClearBaseAgentValues()
+		{
+			m_baseAgentValues.Clear();
+		}
+
 		std::vector<GOAPAction*>& GetActions()
 		{
 			return m_actions;
@@ -42,6 +47,16 @@ namespace GOAP
 			m_goals.push_back(goal);
 		}
 
+		void ClearActions()
+		{
+			m_actions.clear();
+		}
+
+		void ClearGoals()
+		{
+			m_goals.clear();
+		}
+
 	public:
 		GOAPAction* GetAction(int index)
 		{
@@ -53,8 +68,6 @@ namespace GOAP
 			return GOAPPlanner::GetPlanStack(worldState, m_actions, *(FindGoal(worldState)));
 		}
 
-		virtual GOAPGoal* FindGoal(const GOAPWorldState& worldState) = 0;
-
 		GOAPGoal* GetGoal(int index)
 		{
 			return m_goals[index];
@@ -64,6 +77,8 @@ namespace GOAP
 		{
 			GOAPWorldState::FillValues(m_baseAgentValues, agentState);
 		}
+
+		virtual GOAPGoal* FindGoal(const GOAPWorldState& worldState) = 0;
 	};
 
 	class GOAPAgent
@@ -115,6 +130,11 @@ namespace GOAP
 			GOAPWorldState mixed;
 			FillMixedWorldState(mixed);
 			return mixed;
+		}
+
+		GOAPBehaviour* GetBehaviour()
+		{
+			return m_behaviour;
 		}
 
 		void SetBehaviour(GOAPBehaviour* behaviour)

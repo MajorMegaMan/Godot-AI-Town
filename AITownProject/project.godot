@@ -11,6 +11,6 @@ config_version=5
 [application]
 
 config/name="AI Town Project"
-run/main_scene="res://Scenes/main_scene.tscn"
+run/main_scene="res://Scenes/TestScene.tscn"
 config/icon="res://icon.png"
 config/features=PackedStringArray("4.0", "Vulkan Clustered")

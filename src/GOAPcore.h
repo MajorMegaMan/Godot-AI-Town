@@ -453,6 +453,8 @@ namespace GOAP
         size_t m_size = 0;
 
     public:
+        GOAPValue() {}
+
         GOAPValue(char* valueSrc, size_t valueSize)
         {
             m_valueBuffer = valueSrc;
@@ -468,6 +470,19 @@ namespace GOAP
         ~GOAPValue()
         {
 
+        }
+
+        // Set the internal Value Reference of this GOAPValue
+        void SetValueRef(void* valueSrc, size_t valueSize)
+        {
+            m_valueBuffer = (char*)valueSrc;
+            m_size = valueSize;
+        }
+
+        void CopyValueRef(const GOAPValue& other)
+        {
+            m_valueBuffer = other.m_valueBuffer;
+            m_size = other.m_size;
         }
 
         // Gets the current value
@@ -742,6 +757,7 @@ namespace GOAP
         // Assignment
         GOAPWorldState& operator=(const GOAPWorldState& other)
         {
+            Clear();
             CopyValues(other);
             return *this;
         }

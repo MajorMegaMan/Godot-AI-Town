@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  register_types.cpp                                                   */
+/*  example.h                                                            */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,78 +28,40 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "register_types.h"
+#ifndef RESOURCEEXAMPLE_CLASS_H
+#define RESOURCEEXAMPLE_CLASS_H
 
-#include <godot/gdnative_interface.h>
+// We don't need windows.h in this plugin but many others do and it throws up on itself all the time
+// So best to include it and make sure CI warns us when we use something Microsoft took for their own goals....
+#ifdef WIN32
+#include <windows.h>
+#endif
 
-#include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/defs.hpp>
-#include <godot_cpp/godot.hpp>
+#include <godot_cpp/classes/resource.hpp>
 
-#include "example.h"
-#include "enableExample.h"
-#include "ResourceExample.h"
-#include "MyTester.h"
-
-#include "AIAgent.h"
-#include "AIActionTarget.h"
-#include "GameManager.h"
-#include "BaseAgentStats.h"
-#include "BehaviourResource.h"
-#include "ActionResource.h"
-#include "WorldStateObject.h"
-#include "GoalResource.h"
+#include <godot_cpp/core/binder_common.hpp>
 
 using namespace godot;
 
-void initialize_example_module(ModuleInitializationLevel p_level) {
-	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
-		return;
-	}
+class ResourceExample : public Resource {
+	GDCLASS(ResourceExample, Resource);
 
-	// Examples
-	ClassDB::register_class<ExampleRef>();
-	ClassDB::register_class<Example>();
-	ClassDB::register_class<EnableExample>();
-	ClassDB::register_class<ResourceExample>();
-	ClassDB::register_class<MyTester>();
+protected:
+	static void _bind_methods();
 
-	// AI Objects
-	ClassDB::register_class<WorldKeys>();
-	ClassDB::register_class<WorldStateObject>();
-	
-	// AI Resources
-	ClassDB::register_class<BaseAgentStats>();
-	ClassDB::register_class<BehaviourResource>();
-	ClassDB::register_class<ActionResource>();
-	ClassDB::register_class<GoalResource>();
-	
-	// AI Nodes
-	ClassDB::register_class<AIAgent>();
-	ClassDB::register_class<AIActionTarget>();
-	ClassDB::register_class<AnimationTreeGetter>();
+private:
+	Vector2 custom_position;
 
-	// General Nodes
-	ClassDB::register_class<GameManager>();
-}
+public:
+	ResourceExample();
+	~ResourceExample();
 
-void uninitialize_example_module(ModuleInitializationLevel p_level) {
-	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
-		return;
-	}
-}
+	// Functions.
+	void simple_func();
 
-extern "C" {
+	// Property.
+	void set_custom_position(const Vector2 &pos);
+	Vector2 get_custom_position() const;
+};
 
-// Initialization.
-
-GDNativeBool GDN_EXPORT example_library_init(const GDNativeInterface *p_interface, const GDNativeExtensionClassLibraryPtr p_library, GDNativeInitialization *r_initialization) {
-	godot::GDExtensionBinding::InitObject init_obj(p_interface, p_library, r_initialization);
-
-	init_obj.register_initializer(initialize_example_module);
-	init_obj.register_terminator(uninitialize_example_module);
-	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
-
-	return init_obj.init();
-}
-}
+#endif // ! RESOURCEEXAMPLE_CLASS_H

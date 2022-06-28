@@ -10,15 +10,11 @@ var mouseLocNode : Node3D
 
 var mouseScreenPos : Vector2 = Vector2.ZERO
 
-@export var AIAgentPath : NodePath
-var ai_agent : AIAgent
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_process_input(true)
 	camera = get_node(camPath)
 	mouseLocNode = get_node(mouseLocation)
-	ai_agent = get_node(AIAgentPath)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -56,6 +52,6 @@ func _input(event):
 		elif event.button_index == 2:
 			var hitInfo = CamRaycast(event.position)
 			if !hitInfo.is_empty():
-				ai_agent.MoveTo(hitInfo.position)
+				pass
 	elif event is InputEventMouseMotion:
 		mouseScreenPos = event.position

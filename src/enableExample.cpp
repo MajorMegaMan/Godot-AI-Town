@@ -13,7 +13,7 @@ void EnableExample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("Start"), &EnableExample::Start);
 	ClassDB::bind_method(D_METHOD("Exit"), &EnableExample::Exit);
 	ClassDB::bind_method(D_METHOD("simple_func"), &EnableExample::simple_func);
-
+	ClassDB::bind_method(D_METHOD("TestVirtual"), &EnableExample::TestVirtual);
 
 	// Properties.
 	ClassDB::bind_method(D_METHOD("get_node_path"), &EnableExample::get_node_path);
@@ -68,4 +68,9 @@ void EnableExample::Exit()
 void EnableExample::Empty(double delta)
 {
 	// This is intentionally empty.
+}
+
+void EnableExample::TestVirtual()
+{
+	UtilityFunctions::print("Virtual.");
 }

@@ -81,14 +81,21 @@ namespace GOAP
 		bool m_dynamicMovement = true;
 
 	public:
+		// If dynamic movement is true. The internal move location of the agent will be updated from it's current action target.
+		// If false, The internal move location will be set once, at the time when the action is popped from the plan.
 		bool IsDynamicMovement()
 		{
 			return m_dynamicMovement;
 		}
 
+		// Returns the action target that is intended to be used with this action.
+		// If nullptr is returned. The agent will enter a state that will continuously call this method until a target is found.
+		// return the agent as a ptr if the action is intended to be called from any position.
 		virtual GOAPAIActionTarget<TPosition>* FindActionTarget(const GOAPAIAgent<TPosition>& agent) = 0;
 
-		virtual bool IsInRange(const GOAPAIAgent<TPosition>& agent, const GOAPAIActionTarget<TPosition>* actionTarget) const = 0;
+		// Find if the agent is in range using logic from the agent and action target.
+		// if this action is intened to be called from any position, simply return true.
+		virtual bool IsInRange(const GOAPAIAgent<TPosition>& agent, const GOAPAIActionTarget<TPosition>* actionTarget) = 0;
 	};
 
 	// This is an extension of GOAPBehaviour to include position and movement based Logic used by AIAgents.
@@ -105,6 +112,11 @@ namespace GOAP
 		void SetBaseAgentValues(const GOAPWorldState& baseAgentValues)
 		{
 			GOAPBehaviour::SetBaseAgentValues(baseAgentValues);
+		}
+
+		void ClearBaseAgentValues()
+		{
+			GOAPBehaviour::ClearBaseAgentValues();
 		}
 
 		std::vector<GOAPAction*>& GetActions()
@@ -127,6 +139,16 @@ namespace GOAP
 			GOAPBehaviour::AddGoal(goal);
 		}
 
+		void ClearActions()
+		{
+			GOAPBehaviour::ClearActions();
+		}
+
+		void ClearGoals()
+		{
+			GOAPBehaviour::ClearGoals();
+		}
+
 	public:
 		GOAPAction* GetAction(int index)
 		{
@@ -146,6 +168,11 @@ namespace GOAP
 		void FillAgentStateValues(GOAPWorldState& agentState)
 		{
 			GOAPBehaviour::FillAgentStateValues(agentState);
+		}
+
+		virtual void Update(float delta, GOAPWorldState& agentState)
+		{
+
 		}
 	};
 
@@ -184,9 +211,12 @@ namespace GOAP
 	{
 		std::stack<GOAPAction*> m_currentPlan;
 		GOAPAIAction<TPosition>* m_currentAction = nullptr;
+		GOAPAIAction<TPosition>* m_previousAction = nullptr;
 
 		GOAPAIActionTarget<TPosition>* m_actionTarget = nullptr;
 		GOAPAIActionTarget<TPosition>* m_moveTarget = nullptr;
+
+		GOAPAIActionTarget<TPosition>* m_previousActionTarget = nullptr;
 
 		// This is the container for the move location if the action is not a dynamic move type.
 		GOAPAIMoveTarget<TPosition> m_moveTargetHolder;
@@ -198,12 +228,12 @@ namespace GOAP
 		{
 			void Enter(GOAPAIAgent<TPosition>* agent) override
 			{
-				agent->OnActionBegin(agent->m_actionTarget);
+				agent->OnActionBegin(agent->m_currentAction, agent->m_actionTarget);
 			}
 
 			void Exit(GOAPAIAgent<TPosition>* agent) override
 			{
-				agent->OnActionStop(agent->m_actionTarget);
+				agent->OnActionStop(agent->m_previousAction, agent->m_previousActionTarget);
 			}
 
 			void Invoke(GOAPAIAgent<TPosition>* agent) override
@@ -238,6 +268,35 @@ namespace GOAP
 				{
 					agent->MoveArrive();
 					agent->ActionBegin();
+				}
+			}
+		};
+
+		class GOAPAIAgentTargetingState : public ActionSingletonState<GOAPAIAgentTargetingState, TPosition>
+		{
+			void Enter(GOAPAIAgent<TPosition>* agent) override
+			{
+				agent->OnFailFindActionTarget(agent->m_currentAction);
+			}
+
+			void Exit(GOAPAIAgent<TPosition>* agent) override
+			{
+				
+			}
+
+			void Invoke(GOAPAIAgent<TPosition>* agent) override
+			{
+				agent->FindActionTarget();
+				if (agent->m_actionTarget != nullptr)
+				{
+					if (agent->IsInActionRange())
+					{
+						agent->ActionBegin();
+					}
+					else
+					{
+						agent->MoveBegin();
+					}
 				}
 			}
 		};
@@ -289,6 +348,14 @@ namespace GOAP
 			return m_currentAction;
 		}
 
+	protected:
+		GOAPWorldState& GetAgentWorldState()
+		{
+			return agentState;
+		}
+
+	public:
+
 		GOAPWorldState GetAgentWorldStateCopy()
 		{
 			return GOAPAgent::GetAgentWorldStateCopy();
@@ -304,9 +371,10 @@ namespace GOAP
 			return m_moveTarget->GetActionTargetPosition();
 		}
 
-		void Update()
+		void Update(float delta)
 		{
 			m_stateMachine.Invoke();
+			((GOAPAIBehaviour<TPosition>*)GetBehaviour())->Update(delta, agentState);
 		}
 
 		bool IsInActionRange() const
@@ -322,6 +390,7 @@ namespace GOAP
 
 		void PopActionFromPlan()
 		{
+			m_previousAction = m_currentAction;
 			m_currentAction = (GOAPAIAction<TPosition>*)m_currentPlan.top();
 			m_currentPlan.pop();
 			FindActionTarget();
@@ -329,8 +398,13 @@ namespace GOAP
 
 		void FindActionTarget()
 		{
+			m_previousActionTarget = m_actionTarget;
 			m_actionTarget = m_currentAction->FindActionTarget(*this);
-			if (m_currentAction->IsDynamicMovement())
+			if (m_actionTarget == nullptr)
+			{
+				// failed to find a target for this action
+			}
+			else if (m_currentAction->IsDynamicMovement())
 			{
 				m_moveTarget = m_actionTarget;
 			}
@@ -355,10 +429,6 @@ namespace GOAP
 		void ProcessCurrentAction()
 		{
 			// Wait for Action Complete or Action End to be called
-
-			// DEBUG: for now we'll just instantly call Action Complete
-			ApplyCurrentActionEffects();
-			ActionComplete();
 		}
 
 		// Actions will begin during an update step. User does not need to explictly call an action to begin
@@ -367,6 +437,13 @@ namespace GOAP
 			// start action
 			// eg. animation starts playing
 			m_stateMachine.ChangeState(&GOAPAIAgentActionState::GetInstance());
+		}
+
+		// If the desired action failed to find an action target. then move to a state where target will continuosly search for a target.
+		// On entering this state a call will be made to OnFailFindActionTarget
+		void TargetingBegin()
+		{
+			m_stateMachine.ChangeState(&GOAPAIAgentTargetingState::GetInstance());
 		}
 
 		void ProcessNextAction()
@@ -382,13 +459,20 @@ namespace GOAP
 			}
 
 			PopActionFromPlan();
-			if (IsInActionRange())
+			if (m_actionTarget != nullptr)
 			{
-				ActionBegin();
+				if (IsInActionRange())
+				{
+					ActionBegin();
+				}
+				else
+				{
+					MoveBegin();
+				}
 			}
 			else
 			{
-				MoveBegin();
+				TargetingBegin();
 			}
 		}
 
@@ -424,6 +508,16 @@ namespace GOAP
 			ActionEnd();
 		}
 
+		// Reset will clear the current action Plan and set the update state to empty again
+		void Reset()
+		{
+			while (!m_currentPlan.empty())
+			{
+				m_currentPlan.pop();
+			}
+			m_stateMachine.ChangeState(&GOAPAIAgentEmptyState::GetInstance());
+		}
+
 		// overrides
 	protected:
 		virtual void ProcessMove(TPosition actionLocation) = 0;
@@ -432,9 +526,11 @@ namespace GOAP
 
 		virtual void OnMoveStop() = 0;
 
-		virtual void OnActionBegin(GOAPAIActionTarget<TPosition>* actionTarget) = 0;
+		virtual void OnActionBegin(GOAPAIAction<TPosition>* action, GOAPAIActionTarget<TPosition>* actionTarget) = 0;
 
-		virtual void OnActionStop(GOAPAIActionTarget<TPosition>* actionTarget) = 0;
+		virtual void OnActionStop(GOAPAIAction<TPosition>* action, GOAPAIActionTarget<TPosition>* actionTarget) = 0;
+
+		virtual void OnFailFindActionTarget(GOAPAIAction<TPosition>* action) {};
 	};
 }
 

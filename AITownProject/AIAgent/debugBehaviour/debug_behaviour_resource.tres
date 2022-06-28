@@ -1,0 +1,6 @@
+[gd_resource type="BehaviourResource" load_steps=2 format=3 uid="uid://b3si75be7vc2a"]
+
+[ext_resource type="BaseAgentStats" uid="uid://c3d0i8n2brb8h" path="res://AIAgent/debug_base_agent_stats.tres" id="1_0wj65"]
+
+[resource]
+base_agent_values = ExtResource( "1_0wj65" )
