@@ -16,6 +16,8 @@ void WorldStateObject::_bind_methods()
 
 	ClassDB::bind_method(D_METHOD("GetFloat", "key"), &WorldStateObject::GetFloat);
 	ClassDB::bind_method(D_METHOD("SetFloat", "key", "value"), &WorldStateObject::SetFloat);
+
+	ClassDB::bind_method(D_METHOD("DEBUGSetWorldState", "debugWorldState"), &WorldStateObject::DEBUGSetWorldState);
 }
 
 WorldStateObject::WorldStateObject()
@@ -56,6 +58,11 @@ float WorldStateObject::GetFloat(int key)
 void WorldStateObject::SetFloat(int key, float value)
 {
 	m_targetWorldState->SetValue(key, value);
+}
+
+void WorldStateObject::DEBUGSetWorldState(const Ref<BaseAgentStats>& debugWorldState)
+{
+	SetGOAPWorldState(*(GOAPWorldState*)debugWorldState.ptr());
 }
 
 void WorldStateObject::SetGOAPWorldState(const GOAPWorldState& worldState)

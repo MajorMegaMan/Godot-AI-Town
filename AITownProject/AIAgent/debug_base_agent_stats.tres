@@ -1,4 +1,7 @@
-[gd_resource type="BaseAgentStats" format=3 uid="uid://be03vj0kpjj06"]
+[gd_resource type="BaseAgentStats" load_steps=2 format=3 uid="uid://be03vj0kpjj06"]
+
+[ext_resource type="AgentStatResource" uid="uid://4whc68rguwmg" path="res://AIAgent/hunger_agent_stat_resource.tres" id="1_powum"]
 
 [resource]
 name = "TestBoy"
+agent_stats = [ExtResource( "1_powum" )]

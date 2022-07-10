@@ -44,9 +44,9 @@ public:
 	~BehaviourResource();
 
 	// properties
-	// getter for godot resource ref
-	void SetBaseAgentStatsResource(const Ref<BaseAgentStats>& baseAgentStats);
 	// setter for godot resource ref
+	void SetBaseAgentStatsResource(const Ref<BaseAgentStats>& baseAgentStats);
+	// getter for godot resource ref
 	Ref<BaseAgentStats> GetBaseAgentStatsResource();
 
 	String GetName() const;
@@ -65,6 +65,10 @@ public:
 	// Getter for BaseAgentStats
 	BaseAgentStats* GetBaseAgentStats();
 
+private:
+	void _process_action_array_change();
+
+public:
 	// This must be here, but it's intended to be overridden in order to actually be used.
 	virtual GOAPGoal* FindGoal(const GOAPWorldState& worldState) override;
 

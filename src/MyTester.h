@@ -42,6 +42,8 @@ public:
 
 	// Functions.
 	Variant call_void();
+
+	virtual int VirtualTest() { return 8; }
 };
 
 #endif // ! MYTESTER_CLASS_H

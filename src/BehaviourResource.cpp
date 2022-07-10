@@ -2,7 +2,8 @@
 
 #include <godot_cpp/core/class_db.hpp>
 
-#include <godot_cpp/variant/utility_functions.hpp>
+#include "MyUtility.h"
+
 #include "ActionResource.h"
 #include "GoalResource.h"
 
@@ -25,11 +26,13 @@ void BehaviourResource::_bind_methods()
 
 	ClassDB::bind_method(D_METHOD("get_action_array"), &BehaviourResource::get_action_array);
 	ClassDB::bind_method(D_METHOD("set_action_array", "actions"), &BehaviourResource::set_action_array);
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "actions", PropertyHint::PROPERTY_HINT_ARRAY_TYPE, "ActionResource"), "set_action_array", "get_action_array");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "actions"), "set_action_array", "get_action_array");
 
 	ClassDB::bind_method(D_METHOD("get_goal_array"), &BehaviourResource::get_goal_array);
 	ClassDB::bind_method(D_METHOD("set_goal_array", "goals"), &BehaviourResource::set_goal_array);
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "goals", PropertyHint::PROPERTY_HINT_ARRAY_TYPE, "GoalResource"), "set_goal_array", "get_goal_array");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "goals"), "set_goal_array", "get_goal_array");
+
+	ClassDB::bind_method(D_METHOD("_process_action_array_change"), &BehaviourResource::_process_action_array_change);
 }
 
 BehaviourResource::BehaviourResource()
@@ -44,15 +47,17 @@ BehaviourResource::~BehaviourResource()
 
 void BehaviourResource::SetBaseAgentStatsResource(const Ref<BaseAgentStats>& baseAgentStats)
 {
+	if (m_baseAgentsStatsRef.is_valid())
+	{
+		m_baseAgentsStatsRef->disconnect("changed", Callable(this, "_process_action_array_change"));
+	}
 	m_baseAgentsStatsRef = baseAgentStats;
-	if (!m_baseAgentsStatsRef.is_null())
+	if (m_baseAgentsStatsRef.is_valid())
 	{
-		SetBaseAgentValues(*baseAgentStats.ptr());
+		m_baseAgentsStatsRef->connect("changed", Callable(this, "_process_action_array_change"));
 	}
-	else
-	{
-		ClearBaseAgentValues();
-	}
+
+	_process_action_array_change();
 }
 
 Ref<BaseAgentStats> BehaviourResource::GetBaseAgentStatsResource()
@@ -68,98 +73,6 @@ String BehaviourResource::GetName() const
 void BehaviourResource::SetName(const String& value)
 {
 	m_name = value;
-}
-
-// Expects Type T to Inherit from godot::Object
-template<class T>
-bool CheckArrayForType(const Array& value)
-{
-	bool allActionResource = true;
-	for (int i = 0; i < value.size(); i++)
-	{
-		auto element = value[i];
-		if (element.get_type() == 0)
-		{
-			// element is null
-			continue;
-		}
-		else if (element.get_type() != Variant::OBJECT)
-		{
-			// type is not object
-			allActionResource = false;
-			break;
-		}
-		else
-		{
-			// type is object
-
-			// Check if object reference is not empty
-			if (element.booleanize())
-			{
-				// element not empty
-				// Check if the object is actually the resource type we want
-				auto target = Object::cast_to<T>(element);
-				
-				if (target != nullptr && !target->is_class(T::get_class_static()))
-				{
-					UtilityFunctions::print("Unexpected element in Array!");
-					allActionResource = false;
-					break;
-				}
-				else if (target == nullptr)
-				{
-					// Shouldn't get here, but just in case
-					UtilityFunctions::print("Unexpected element in Array!");
-					allActionResource = false;
-					break;
-				}
-			}
-		}
-	}
-	return allActionResource;
-}
-
-#define MESSAGE_CLASS(t_resourceClass) #t_resourceClass
-#define EXPECTED_TYPE_MESSAGE_PREFIX "Expected elements of this array are: "
-#define EXPECTED_TYPE_MESSAGE_SUFFIX ". Did not set the target array value."
-#define EXPECTED_TYPE_MESSAGE(t_resourceClass) EXPECTED_TYPE_MESSAGE_PREFIX MESSAGE_CLASS(t_resourceClass) EXPECTED_TYPE_MESSAGE_SUFFIX
-
-#define MESSAGE_SUCCESS_PREFIX "Success: "
-#define MESSAGE_TYPE_SUCCESS(t_resourceClass) MESSAGE_SUCCESS_PREFIX MESSAGE_CLASS(t_resourceClass)
-
-#define ADD_RESOURCE_ARRAY(targetArray, value, t_resourceClass, m_clearMethod, m_addMethod)										\
-if (CheckArrayForType<t_resourceClass>(value))																					\
-{																																\
-	targetArray = value;																										\
-																																\
-	m_clearMethod();																											\
-	for (int i = 0; i < value.size(); i++)																						\
-	{																															\
-		auto element = value[i];																								\
-		if (element.get_type() != 0)																							\
-		{																														\
-			if (!element.booleanize())																							\
-			{																													\
-				UtilityFunctions::push_warning("Empty element.");																\
-				continue;																										\
-			}																													\
-																																\
-			auto target = Object::cast_to<t_resourceClass>(element);															\
-			if (target != nullptr)																								\
-			{																													\
-				m_addMethod(target);																							\
-				UtilityFunctions::print(MESSAGE_TYPE_SUCCESS(t_resourceClass));													\
-			}																													\
-			else																												\
-			{																													\
-				UtilityFunctions::push_error("Null ptr to Object.");															\
-			}																													\
-		}																														\
-	}																															\
-}																																\
-else																															\
-{																																\
-	UtilityFunctions::push_error(EXPECTED_TYPE_MESSAGE(t_resourceClass));															\
 }
 
 void BehaviourResource::set_action_array(const Array& value)
@@ -197,13 +110,50 @@ BaseAgentStats* BehaviourResource::GetBaseAgentStats()
 	return m_baseAgentsStatsRef.ptr();
 }
 
+void BehaviourResource::_process_action_array_change()
+{
+	UtilityFunctions::print("Updating Behaviour");
+	if (!m_baseAgentsStatsRef.is_null())
+	{
+		SetBaseAgentValues(*m_baseAgentsStatsRef.ptr());
+	}
+	else
+	{
+		ClearBaseAgentValues();
+	}
+}
+
 GOAPGoal* BehaviourResource::FindGoal(const GOAPWorldState& worldState)
 {
 	m_worldStateObjectRef->SetGOAPWorldState(worldState);
 
 	Variant worldVariant(m_worldStateObjectRef);
 
+	//Variant selfScript = Object::get_script();
+	//if (selfScript.booleanize())
+	//{
+	//	Variant result = call("FindGoal", worldVariant);
+	//	return Object::cast_to<GoalResource>(result);
+	//}
+	//else
+	//{
+	//	return nullptr;
+	//}
+
 	Variant resultVariant = m_scriptTarget->call("FindGoal", get_goal_array(), worldVariant);
+
+	if (resultVariant.booleanize())
+	{
+		auto goalResource = Object::cast_to<GoalResource>(resultVariant);
+		UtilityFunctions::print(goalResource->get_class());
+	}
+	else
+	{
+		UtilityFunctions::print("Variant got busted.");
+		UtilityFunctions::print(Variant::get_type_name(resultVariant.get_type()));
+		return nullptr;
+	}
+
 	return Object::cast_to<GoalResource>(resultVariant);
 }
 

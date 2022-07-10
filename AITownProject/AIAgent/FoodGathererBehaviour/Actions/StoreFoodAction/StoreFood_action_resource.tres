@@ -1,0 +1,9 @@
+[gd_resource type="ActionResource" load_steps=3 format=3 uid="uid://fv1uitmwt64n"]
+
+[ext_resource type="AgentStatResource" uid="uid://crhi0ucrghhym" path="res://AIAgent/FoodGathererBehaviour/Actions/StoreFoodAction/StoreFood_keys.tres" id="1_2cdn1"]
+[ext_resource type="Script" path="res://AIAgent/FoodGathererBehaviour/Actions/StoreFoodAction/action_StoreFood_script.gd" id="1_sf7qf"]
+
+[resource]
+name = "StoreFood"
+target_script = ExtResource( "1_sf7qf" )
+goap_keys = [ExtResource( "1_2cdn1" )]

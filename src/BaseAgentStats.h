@@ -11,6 +11,7 @@
 
 #include <godot_cpp/core/binder_common.hpp>
 
+#include "AgentStatResource.h"
 #include "GOAPAI.h"
 #include "DEBUGWorldKeys.h"
 
@@ -29,23 +30,29 @@ protected:
 private:
 	String m_name;
 
+	Array m_agentStatArray;
+	std::vector<Ref<AgentStatResource>> m_agentStatResourceRefs;
+
 public:
 	BaseAgentStats();
 	~BaseAgentStats();
 
 	// properties
-	float GetBaseHunger() const;
-	void SetBaseHunger(float value);
-
-	int GetBaseHoldItem() const;
-	void SetBaseHoldItem(int value);
-
 	String GetName() const;
 	void SetName(const String& value);
 
+	void set_agent_stat_array(const Array& value);
+	Array get_agent_stat_array() const;
+
 	// Functions.
+	void _process_agent_stat_change();
+
 	GOAPValue GetBaseValue(int key);
 	GOAPReadValue GetBaseReadValue(int key) const;
+
+	void AddAgentStat(AgentStatResource* agentStat);
+
+	void ClearAgentStats();
 
 	friend BehaviourResource;
 };

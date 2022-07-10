@@ -47,20 +47,6 @@ BehaviourResource* GameManager::GetBehaviourResource()
 void GameManager::OnStart()
 {
 	UtilityFunctions::print("GameManager Start");
-	if (!m_behaviourResourceRef.is_null())
-	{
-		String format_hunger = "Hunger: %s";
-		String result_hunger = format_hunger % (String::num(GetBehaviourResource()->GetBaseAgentStatsResource()->GetBaseHunger()));
-		String format_holdItem = "HoldItem: %s";
-		String result_holdItem = format_holdItem % (String::num(GetBehaviourResource()->GetBaseAgentStatsResource()->GetBaseHoldItem()));
-
-		UtilityFunctions::print(result_hunger);
-		UtilityFunctions::print(result_holdItem);
-	}
-	else
-	{
-		UtilityFunctions::print("No Behaviour was loaded.");
-	}
 }
 
 void GameManager::OnUpdate(double delta)

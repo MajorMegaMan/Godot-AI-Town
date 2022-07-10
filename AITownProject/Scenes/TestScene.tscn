@@ -1,15 +1,37 @@
-[gd_scene load_steps=4 format=3 uid="uid://d25v6w2csevgk"]
+[gd_scene load_steps=6 format=3 uid="uid://pyp0bxinrxgs"]
 
-[ext_resource type="Script" path="res://Scripts/DEBUG/debug_testCaller.gd" id="1_jfx38"]
-[ext_resource type="Script" path="res://Scripts/DEBUG/debug_testThing.gd" id="2_31arw"]
-[ext_resource type="ActionResource" uid="uid://w0c6yoffagtk" path="res://AIAgent/debugAction/debug_action_resource.tres" id="2_77nfc"]
+[ext_resource type="Script" path="res://Scenes/TestResource/debug_testCaller.gd" id="1_jfx38"]
+[ext_resource type="Script" path="res://Scenes/TestResource/debug_inheritTest.gd" id="2_vvcwg"]
+[ext_resource type="Script" path="res://AIAgent/FoodGathererBehaviour/Actions/PickUpFoodAction/action_PickUpFood_script.gd" id="3_0ormk"]
+[ext_resource type="Script" path="res://ActionTargets/ActionListInsertScript.gd" id="4_3r80f"]
+[ext_resource type="BaseAgentStats" uid="uid://bichiwnabxy0q" path="res://Scenes/TestResource/testWorldState.tres" id="4_ypqal"]
 
 [node name="Node3D" type="Node3D"]
 
 [node name="MyTester" type="MyTester" parent="."]
 func_name = "funcToCall"
 target_script = ExtResource( "1_jfx38" )
-actions = [ExtResource( "2_77nfc" ), null]
+script = ExtResource( "2_vvcwg" )
+debugScript = ExtResource( "3_0ormk" )
+position = Vector3(17, 0, 0)
+testWorldState = ExtResource( "4_ypqal" )
 
 [node name="Node" type="Node" parent="MyTester"]
-script = ExtResource( "2_31arw" )
+
+[node name="Node3D" type="Node3D" parent="."]
+
+[node name="AIActionTargetTEST1" type="AIActionTarget" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
+script = ExtResource( "4_3r80f" )
+
+[node name="AIActionTargetTEST2" type="AIActionTarget" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 0)
+script = ExtResource( "4_3r80f" )
+
+[node name="AIActionTargetTEST3" type="AIActionTarget" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
+script = ExtResource( "4_3r80f" )
+
+[node name="AIActionTargetTEST4" type="AIActionTarget" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+script = ExtResource( "4_3r80f" )

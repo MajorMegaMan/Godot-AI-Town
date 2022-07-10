@@ -44,6 +44,8 @@
 #include "AIAgent.h"
 #include "AIActionTarget.h"
 #include "GameManager.h"
+
+#include "AgentStatResource.h"
 #include "BaseAgentStats.h"
 #include "BehaviourResource.h"
 #include "ActionResource.h"
@@ -69,6 +71,7 @@ void initialize_example_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<WorldStateObject>();
 	
 	// AI Resources
+	ClassDB::register_class<AgentStatResource>();
 	ClassDB::register_class<BaseAgentStats>();
 	ClassDB::register_class<BehaviourResource>();
 	ClassDB::register_class<ActionResource>();

@@ -13,6 +13,7 @@
 
 #include "GOAPAI.h"
 #include "DEBUGWorldKeys.h"
+#include "BaseAgentStats.h"
 
 using namespace godot;
 using namespace GOAP;
@@ -44,6 +45,9 @@ public:
 
 	float GetFloat(int key);
 	void SetFloat(int key, float value);
+
+	// This is only really to be used for debugging purposes.
+	void DEBUGSetWorldState(const Ref<BaseAgentStats>& debugWorldState);
 
 	// Non Godot Functions
 	void SetGOAPWorldState(const GOAPWorldState& worldState);

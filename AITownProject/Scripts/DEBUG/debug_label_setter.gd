@@ -1,5 +1,5 @@
 extends Node
-
+@export var dictionary : PackedInt64Array
 @export var labelNodePath : NodePath
 var labelNode : Label
 @export var agentPath : NodePath

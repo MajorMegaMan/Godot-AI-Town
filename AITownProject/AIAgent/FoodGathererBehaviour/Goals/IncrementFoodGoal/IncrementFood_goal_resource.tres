@@ -1,0 +1,9 @@
+[gd_resource type="GoalResource" load_steps=3 format=3 uid="uid://cor84jkpridrs"]
+
+[ext_resource type="Script" path="res://AIAgent/FoodGathererBehaviour/Goals/IncrementFoodGoal/goal_incrementFood_script.gd" id="1_f21km"]
+[ext_resource type="AgentStatResource" uid="uid://dk8kmv6qpfj6" path="res://AIAgent/FoodGathererBehaviour/Goals/IncrementFoodGoal/incrementFoodCount_keys.tres" id="1_r8x6k"]
+
+[resource]
+name = "IncrementFood"
+target_script = ExtResource( "1_f21km" )
+goap_keys = [ExtResource( "1_r8x6k" )]

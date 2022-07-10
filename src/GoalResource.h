@@ -15,6 +15,7 @@
 #include "GOAPAI.h"
 #include "DEBUGWorldKeys.h"
 #include "WorldStateObject.h"
+#include "MyUtility.h"
 
 using namespace godot;
 using namespace GOAP;
@@ -28,9 +29,35 @@ class GoalResource : public Resource, public GOAPGoal
 protected:
 	static void _bind_methods();
 
+	class GoapKeyArray : public TargetedArray<AgentStatResource, GoalResource>
+	{
+	public:
+		GoapKeyArray(GoalResource* owner, const StringName& method) : TargetedArray(owner, method)
+		{
+
+		}
+
+		~GoapKeyArray() {}
+
+		void OnClearTargetedArray(GoalResource* owner) override
+		{
+			owner->ClearKeys();
+		}
+		void OnAddValue(GoalResource* owner, Ref<AgentStatResource>& valueRef) override
+		{
+			auto keys = valueRef->GetGOAPKeys();
+			for (auto key : keys)
+			{
+				owner->AddKey(key);
+			}
+		}
+	};
+
 private:
 	String m_name;
 	Ref<GDScript> m_scriptTarget;
+
+	GoapKeyArray m_GOAPKeys;
 
 	// Internal functionality
 	WorldStateObject* m_currentWorldStateObjectRef;
@@ -47,8 +74,14 @@ public:
 	void set_script(const Ref<GDScript>& gdScript);
 	Ref<GDScript> get_script() const;
 
-	// Functions.
+	void set_goap_key_array(const Array& value);
+	Array get_goap_key_array() const;
 
+	void AddGOAPKey(const Ref<AgentStatResource>& goapKeys);
+	void ClearGOAPKeys();
+
+	// Functions.
+	void _process_agent_stat_change();
 private:
 
 

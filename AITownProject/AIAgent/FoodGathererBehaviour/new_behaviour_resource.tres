@@ -1,0 +1,14 @@
+[gd_resource type="BehaviourResource" load_steps=6 format=3 uid="uid://bg7usjtg8bmqs"]
+
+[ext_resource type="ActionResource" uid="uid://v713pc36sktm" path="res://AIAgent/FoodGathererBehaviour/Actions/PickUpFoodAction/PickUpFood_action_resource.tres" id="1_yws5u"]
+[ext_resource type="ActionResource" uid="uid://fv1uitmwt64n" path="res://AIAgent/FoodGathererBehaviour/Actions/StoreFoodAction/StoreFood_action_resource.tres" id="2_3fei1"]
+[ext_resource type="BaseAgentStats" uid="uid://be03vj0kpjj06" path="res://AIAgent/debug_base_agent_stats.tres" id="3_qmjqo"]
+[ext_resource type="GoalResource" uid="uid://cor84jkpridrs" path="res://AIAgent/FoodGathererBehaviour/Goals/IncrementFoodGoal/IncrementFood_goal_resource.tres" id="4_ix3um"]
+[ext_resource type="Script" path="res://AIAgent/FoodGathererBehaviour/behaviour_foodGatherer_script.gd" id="5_pfwxf"]
+
+[resource]
+name = "FoodGatherer"
+base_agent_values = ExtResource( "3_qmjqo" )
+target_script = ExtResource( "5_pfwxf" )
+actions = [ExtResource( "1_yws5u" ), ExtResource( "2_3fei1" )]
+goals = [ExtResource( "4_ix3um" )]

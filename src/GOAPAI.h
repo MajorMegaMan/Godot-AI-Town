@@ -108,71 +108,76 @@ namespace GOAP
 		{
 			return GOAPBehaviour::GetBaseAgentValues();
 		}
-
+		
 		void SetBaseAgentValues(const GOAPWorldState& baseAgentValues)
 		{
 			GOAPBehaviour::SetBaseAgentValues(baseAgentValues);
 		}
-
+		
 		void ClearBaseAgentValues()
 		{
 			GOAPBehaviour::ClearBaseAgentValues();
 		}
-
+		
 		std::vector<GOAPAction*>& GetActions()
 		{
 			return GOAPBehaviour::GetActions();
 		}
-
+		
 		std::vector<GOAPGoal*>& GetGoals()
 		{
 			return GOAPBehaviour::GetGoals();
 		}
-
+		
 		void AddAction(GOAPAIAction<TPosition>* action)
 		{
 			GOAPBehaviour::AddAction(action);
 		}
-
+		
 		void AddGoal(GOAPGoal* goal)
 		{
 			GOAPBehaviour::AddGoal(goal);
 		}
-
+		
 		void ClearActions()
 		{
 			GOAPBehaviour::ClearActions();
 		}
-
+		
 		void ClearGoals()
 		{
 			GOAPBehaviour::ClearGoals();
 		}
 
 	public:
+		GOAPBehaviour* GetSelf()
+		{
+			return this;
+		}
+
 		GOAPAction* GetAction(int index)
 		{
 			return GOAPBehaviour::GetAction(index);
 		}
-
+		
 		std::stack<GOAPAction*> GetPlanStack(const GOAPWorldState& worldState)
 		{
 			return GOAPBehaviour::GetPlanStack(worldState);
 		}
-
+		
 		GOAPGoal* GetGoal(int index)
 		{
 			return GOAPBehaviour::GetGoal(index);
 		}
-
+		
 		void FillAgentStateValues(GOAPWorldState& agentState)
 		{
 			GOAPBehaviour::FillAgentStateValues(agentState);
 		}
-
+		
 		virtual void Update(float delta, GOAPWorldState& agentState)
 		{
-
+		
 		}
 	};
 
@@ -206,9 +211,12 @@ namespace GOAP
 	};
 
 	// This is a GOAPAgent that runs it's own logic With every Update call.
+	// GOAPAgent inheritence should NOT be public. It is currently for DEBUG puurposes.
 	template <class TPosition>
-	class GOAPAIAgent : GOAPAgent, public GOAPAIActionTarget<TPosition>
+	class GOAPAIAgent : public GOAPAgent, public GOAPAIActionTarget<TPosition>
 	{
+		// DEBUG SHOULD NOT BE PUBLIC //////////////////////////////////////////////////
+	public:
 		std::stack<GOAPAction*> m_currentPlan;
 		GOAPAIAction<TPosition>* m_currentAction = nullptr;
 		GOAPAIAction<TPosition>* m_previousAction = nullptr;
@@ -335,7 +343,7 @@ namespace GOAP
 
 		void SetBehaviour(GOAPAIBehaviour<TPosition>* behaviour)
 		{
-			GOAPAgent::SetBehaviour((GOAPBehaviour*)behaviour);
+			GOAPAgent::SetBehaviour(behaviour->GetSelf());
 		}
 
 		std::stack<GOAPAction*> GetCurrentPlan()
@@ -383,6 +391,8 @@ namespace GOAP
 		}
 
 	private:
+		// DEBUG SHOULD NOT BE PUBLIC //////////////////////////////////////////////////
+	public:
 		void FindPlan()
 		{
 			m_currentPlan = GetPlanStack();

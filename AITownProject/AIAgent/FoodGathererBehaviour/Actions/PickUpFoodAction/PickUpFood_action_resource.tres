@@ -1,0 +1,9 @@
+[gd_resource type="ActionResource" load_steps=3 format=3 uid="uid://v713pc36sktm"]
+
+[ext_resource type="AgentStatResource" uid="uid://kdbhr1710jl4" path="res://AIAgent/FoodGathererBehaviour/Actions/PickUpFoodAction/pick_up_food_keys.tres" id="1_eqytx"]
+[ext_resource type="Script" path="res://AIAgent/FoodGathererBehaviour/Actions/PickUpFoodAction/action_PickUpFood_script.gd" id="1_ty6b1"]
+
+[resource]
+name = "PickUpFood"
+target_script = ExtResource( "1_ty6b1" )
+goap_keys = [ExtResource( "1_eqytx" )]

@@ -1,19 +1,20 @@
-[gd_scene load_steps=25 format=3 uid="uid://dtt6c163jo7uj"]
+[gd_scene load_steps=26 format=3 uid="uid://bsvshkuskv3fu"]
 
-[ext_resource type="BehaviourResource" path="res://AIAgent/debugBehaviour/debug_behaviour_resource.tres" id="1_5y5vt"]
-[ext_resource type="Environment" path="res://Environments/main_environment.tres" id="1_t8gxv"]
+[ext_resource type="BehaviourResource" uid="uid://b3si75be7vc2a" path="res://GOAP/debugBehaviour/debug_behaviour_resource.tres" id="1_5y5vt"]
+[ext_resource type="Environment" uid="uid://1qi7u0hfjyo8" path="res://Environments/main_environment.tres" id="1_t8gxv"]
 [ext_resource type="Script" path="res://Scripts/enabler.gd" id="1_x4v7o"]
 [ext_resource type="Script" path="res://Scripts/camera_follow.gd" id="1_xx5hh"]
-[ext_resource type="Material" path="res://Materials/ground_material_3d.tres" id="2_wixbm"]
-[ext_resource type="Texture2D" path="res://icon.png" id="3_4vpqf"]
+[ext_resource type="Material" uid="uid://cc1d2r2ugluth" path="res://Materials/ground_material_3d.tres" id="2_wixbm"]
+[ext_resource type="Texture2D" uid="uid://ckc4lsj2hbo8h" path="res://icon.png" id="3_4vpqf"]
 [ext_resource type="Script" path="res://Scripts/DEBUG/debug_control.gd" id="3_04xr3"]
-[ext_resource type="Material" path="res://Materials/toonWall_material_3d.tres" id="5_uwr6l"]
+[ext_resource type="Material" uid="uid://de44bbjkp7vql" path="res://Materials/toonWall_material_3d.tres" id="5_uwr6l"]
 [ext_resource type="Script" path="res://Scripts/DEBUG/debug_mouseCamRay.gd" id="7_fycet"]
-[ext_resource type="Material" path="res://Materials/OutlineShrinkShader/outline_material.tres" id="8_nyvw7"]
-[ext_resource type="PackedScene" path="res://ActionTargets/FoodTarget.tscn" id="9_bkkcd"]
-[ext_resource type="PackedScene" path="res://ActionTargets/FoodStorageTarget.tscn" id="10_jo04s"]
-[ext_resource type="PackedScene" path="res://AIAgent/AIAgent.tscn" id="11_a3yvp"]
+[ext_resource type="Material" uid="uid://gl28bx8tmyos" path="res://Materials/OutlineShrinkShader/outline_material.tres" id="8_nyvw7"]
+[ext_resource type="PackedScene" uid="uid://ciqer7nmkweke" path="res://ActionTargets/FoodTarget.tscn" id="9_bkkcd"]
+[ext_resource type="PackedScene" uid="uid://b4hujkwrcjklu" path="res://ActionTargets/FoodStorageTarget.tscn" id="10_jo04s"]
+[ext_resource type="PackedScene" uid="uid://cpqtiwrljp8r" path="res://AIAgent/AIAgent.tscn" id="11_a3yvp"]
 [ext_resource type="Script" path="res://Scripts/DEBUG/debug_label_setter.gd" id="12_6g26j"]
+[ext_resource type="BehaviourResource" uid="uid://bg7usjtg8bmqs" path="res://AIAgent/FoodGathererBehaviour/new_behaviour_resource.tres" id="14_bq6wr"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_3vnl1"]
 
@@ -161,10 +162,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.84099, 0, 8.62571)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.944961, 4.76837e-07, -5.52284)
 
 [node name="AIAgent" parent="." instance=ExtResource( "11_a3yvp" )]
+behaviour = ExtResource( "14_bq6wr" )
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5736, 0, 7.93422)
 
 [node name="MarginContainer2" type="MarginContainer" parent="."]
 script = ExtResource( "12_6g26j" )
+dictionary = PackedInt64Array(0, 0, 0, 0)
 labelNodePath = NodePath("Label")
 agentPath = NodePath("../AIAgent")
 

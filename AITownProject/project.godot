@@ -8,9 +8,30 @@
 
 config_version=5
 
+_global_script_classes=[{
+"base": "Node",
+"class": &"AIWorldKeys",
+"language": &"GDScript",
+"path": "res://AIAgent/AIEnums.gd"
+}, {
+"base": "RefCounted",
+"class": &"Practice",
+"language": &"GDScript",
+"path": "res://Scripts/DEBUG/enums_script.gd"
+}]
+_global_script_class_icons={
+"AIWorldKeys": "",
+"Practice": ""
+}
+
 [application]
 
 config/name="AI Town Project"
-run/main_scene="res://Scenes/TestScene.tscn"
+run/main_scene="res://Scenes/main_scene.tscn"
 config/icon="res://icon.png"
 config/features=PackedStringArray("4.0", "Vulkan Clustered")
+
+[autoload]
+
+AiEnums="*res://AIAgent/AIEnums.gd"
+ActionTargetList="*res://ActionTargets/ActionTargetList.gd"

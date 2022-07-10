@@ -15,10 +15,16 @@ void AIAgent::_bind_methods() {
 	// Methods.
 	ClassDB::bind_method(D_METHOD("Start"), &AIAgent::Start);
 	ClassDB::bind_method(D_METHOD("Exit"), &AIAgent::Exit);
+	ClassDB::bind_method(D_METHOD("Update", "delta"), &AIAgent::Update);
+	ClassDB::bind_method(D_METHOD("PhysicsUpdate", "delta"), &AIAgent::PhysicsUpdate);
 	ClassDB::bind_method(D_METHOD("on_velocity_computed"), &AIAgent::on_velocity_computed);
 	ClassDB::bind_method(D_METHOD("on_target_reached"), &AIAgent::on_target_reached);
 
 	// Properties.
+	ClassDB::bind_method(D_METHOD("get_behaviour_resource"), &AIAgent::get_behaviour_resource);
+	ClassDB::bind_method(D_METHOD("set_behaviour_resource", "behaviourResource"), &AIAgent::set_behaviour_resource);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "behaviour", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "BehaviourResource"), "set_behaviour_resource", "get_behaviour_resource");
+
 	ClassDB::bind_method(D_METHOD("get_navigation_node_path"), &AIAgent::get_navigation_node_path);
 	ClassDB::bind_method(D_METHOD("set_navigation_node_path", "navNodePath"), &AIAgent::set_navigation_node_path);
 	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "navigation_node_path"), "set_navigation_node_path", "get_navigation_node_path");
@@ -35,10 +41,15 @@ void AIAgent::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("GetWorldStateInt", "key"), &AIAgent::GetWorldStateInt);
 	ClassDB::bind_method(D_METHOD("GetWorldStateBool", "key"), &AIAgent::GetWorldStateBool);
 	ClassDB::bind_method(D_METHOD("GetWorldStateFloat", "key"), &AIAgent::GetWorldStateFloat);
+
+	ClassDB::bind_method(D_METHOD("DEBUGFindPlan"), &AIAgent::DEBUGFindPlan);
+	ClassDB::bind_method(D_METHOD("DEBUGPopNext"), &AIAgent::DEBUGPopNext);
+	ClassDB::bind_method(D_METHOD("DEBUGTestCurrentActionRange"), &AIAgent::DEBUGTestCurrentActionRange);
 }
 
 AIAgent::AIAgent()
 {
+	m_animStatePlayback = nullptr;
 	processFunc = &AIAgent::Empty;
 	physicsFunc = &AIAgent::Empty;
 }
@@ -109,18 +120,23 @@ NodePath AIAgent::get_anim_tree_getter_path() const
 	return m_animTreeHolderProp.GetNodePath();
 }
 
-void AIAgent::OnStart()
+void AIAgent::set_behaviour_resource(const Ref<BehaviourResource>& behaviourResource)
+{
+	m_behaviourResource = behaviourResource;
+}
+
+Ref<BehaviourResource> AIAgent::get_behaviour_resource()
+{
+	return m_behaviourResource;
+}
+
+void AIAgent::Start()
 {
 	SetUpNavigationAgent();
 	SetUpGOAPAgent();
 }
 
-void AIAgent::OnUpdate(double delta)
-{
-	(this->*physicsFunc)(delta);
-}
-
-void AIAgent::OnExit()
+void AIAgent::Exit()
 {
 
 }
@@ -130,19 +146,26 @@ void AIAgent::Empty(double delta)
 
 }
 
-void AIAgent::_process(double delta)
+void AIAgent::Update(double delta)
 {
 	(this->*processFunc)(delta);
 }
 
-void AIAgent::_physics_process(double delta)
+void AIAgent::PhysicsUpdate(double delta)
 {
-	NodeStarter::ProcessUpdate(delta);
+	(this->*physicsFunc)(delta);
 }
 
 void AIAgent::SetUpNavigationAgent()
 {
 	m_navAgentProp.ApplyPath(*this);
+
+	auto navAgentNode = GetNavAgent();
+	if (navAgentNode == nullptr)
+	{
+		UtilityFunctions::print("Failed To find navAgent node.");
+		return;
+	}
 
 	// Set up navigation agent and map
 	RID agent_rid = GetNavAgent()->get_rid();
@@ -164,8 +187,18 @@ void AIAgent::SetUpGOAPAgent()
 {
 	UtilityFunctions::print("Begin set up GOAPAgent.");
 	SetWorldState(AIWorld::GetWorldState());
-	SetBehaviour(BehaviourFoodGatherer::GetInstance());
-	processFunc = &AIAgent::PlanUpdate;
+	//SetBehaviour(BehaviourFoodGatherer::GetInstance());
+	
+	auto targetBehaviour = m_behaviourResource.ptr();
+	if (targetBehaviour != nullptr)
+	{
+		SetBehaviour(m_behaviourResource.ptr());
+		processFunc = &AIAgent::PlanUpdate;
+	}
+	else
+	{
+		UtilityFunctions::print("Behaviour is missing.");
+	}
 
 	//m_animTreeHolderProp.ApplyPath(*this);
 	AnimationTree* animTree = nullptr;

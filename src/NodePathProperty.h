@@ -47,6 +47,12 @@ public:
 	{
 		SetNode(owner.get_node<T>(m_nodePath));
 	}
+
+	void Clear()
+	{
+		SetNode(nullptr);
+		m_nodePath = NodePath();
+	}
 };
 
 #endif // ! NODEPATHPROPERTY_CLASS_H

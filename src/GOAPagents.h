@@ -27,11 +27,13 @@ namespace GOAP
 			m_baseAgentValues.Clear();
 		}
 
+	public:
 		std::vector<GOAPAction*>& GetActions()
 		{
 			return m_actions;
 		}
 
+	protected:
 		std::vector<GOAPGoal*>& GetGoals()
 		{
 			return m_goals;
@@ -58,6 +60,11 @@ namespace GOAP
 		}
 
 	public:
+		GOAPBehaviour* GetSelf()
+		{
+			return this;
+		}
+
 		GOAPAction* GetAction(int index)
 		{
 			return m_actions[index];
@@ -65,7 +72,12 @@ namespace GOAP
 
 		std::stack<GOAPAction*> GetPlanStack(const GOAPWorldState& worldState)
 		{
-			return GOAPPlanner::GetPlanStack(worldState, m_actions, *(FindGoal(worldState)));
+			auto goal = FindGoal(worldState);
+			if (goal == nullptr)
+			{
+				return std::stack<GOAPAction*>();
+			}
+			return GOAPPlanner::GetPlanStack(worldState, m_actions, *goal);
 		}
 
 		GOAPGoal* GetGoal(int index)

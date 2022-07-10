@@ -145,6 +145,7 @@ namespace GOAP
             if (m_allocatedArray != nullptr)
             {
                 delete[] m_allocatedArray;
+                m_allocatedArray = nullptr;
             }
             m_totalSize = 0;
         }
@@ -781,6 +782,11 @@ namespace GOAP
                 // key does not exist
                 m_keys.push_back(key);
             }
+        }
+
+        void ClearKeys()
+        {
+            m_keys.clear();
         }
 
     public:
